@@ -1,12 +1,9 @@
 import { Router } from 'express'
-import { config } from 'dotenv'
-
-config()
+import { promptGPT, promptMixtral } from '../lib/utils'
 const router = Router()
 
 router.get('/hello', (req, res) => {
   res.send('Hello World!')
-  console.log(process.env)
 })
 
 export { router }
