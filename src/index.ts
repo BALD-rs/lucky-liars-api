@@ -27,3 +27,5 @@ app.use('/api/v1', apiRouter)
 app.listen(port, () => {
   console.info('Express server listening on http://127.0.0.1:' + port)
 })
+
+export { app }
