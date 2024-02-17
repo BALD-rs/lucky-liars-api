@@ -1,4 +1,6 @@
 import express from 'express'
+import { loadJson } from './lib/utils'
+
 const app = express()
 const port = 7474
 
@@ -14,10 +16,8 @@ app.use((req, res, next) => {
   }
 })
 
-// Static Web Files
-app.use(express.static('public'))
-// Flatten icons to /public for device support reasons
-app.use(express.static('public/icons'))
+// support for json requests
+app.use(express.json())
 
 // Add endpoints
 import { router as apiRouter } from './routes/api'
@@ -27,5 +27,15 @@ app.use('/api/v1', apiRouter)
 app.listen(port, () => {
   console.info('Express server listening on http://127.0.0.1:' + port)
 })
+
+const loadSuspects = async () => {
+  try {
+    app.locals.suspects = await loadJson('suspects.json')
+    console.log(`${app.locals.suspects.length} suspects loaded`)
+  } catch (error) {
+    console.error('error loading suspects.json')
+  }
+}
+loadSuspects()
 
 export { app }
