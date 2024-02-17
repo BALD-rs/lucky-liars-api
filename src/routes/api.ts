@@ -8,10 +8,15 @@ router.get('/hello', (req, res) => {
 })
 
 router.post('/interrogate', async (req: Request, res: Response) => {
-  console.log(req.body)
-  if (req.body.name && req.body.game_id && req.body.message && req.body.our_roll && req.body.sus_roll) {
+  if (
+    'name' in req.body &&
+    'game_id' in req.body &&
+    'message' in req.body &&
+    'our_roll' in req.body &&
+    'sus_roll' in req.body
+  ) {
     try {
-      const response = await prompt('fireworks', req.body.message)
+      const response = await prompt('openai', req.body.message)
       res.json({
         response,
       })

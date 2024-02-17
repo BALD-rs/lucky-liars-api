@@ -23,19 +23,18 @@ app.use(express.json())
 import { router as apiRouter } from './routes/api'
 app.use('/api/v1', apiRouter)
 
-// Host express server
-app.listen(port, () => {
-  console.info('Express server listening on http://127.0.0.1:' + port)
-})
-
-const loadSuspects = async () => {
+const init = async () => {
   try {
     app.locals.suspects = await loadJson('suspects.json')
     console.log(`${app.locals.suspects.length} suspects loaded`)
   } catch (error) {
     console.error('error loading suspects.json')
   }
+  app.locals.game = {} // this will store game status, accessed by UUID
+  app.listen(port, () => {
+    console.info('Express server listening on http://127.0.0.1:' + port)
+  })
 }
-loadSuspects()
+init()
 
 export { app }
