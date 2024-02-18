@@ -1,5 +1,5 @@
 import express from 'express'
-import { loadJson } from './lib/utils'
+import { prompt, loadJson } from './lib/utils'
 
 const app = express()
 const port = 7474

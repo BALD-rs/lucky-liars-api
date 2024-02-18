@@ -7,7 +7,8 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY || '',
   baseURL: process.env.OPENAI_API_URL || '',
 })
-const OPENAI_MODEL = 'gpt-4-turbo-preview'
+// const OPENAI_MODEL = 'gpt-4-turbo-preview'
+const OPENAI_MODEL = 'gpt-3.5-turbo'
 const fireworks = new OpenAI({
   apiKey: process.env.FIREWORKS_AI_API_KEY || '',
   baseURL: process.env.FIREWORKS_AI_API_URL || '',
@@ -28,14 +29,6 @@ async function prompt(apiClient: string, prompts: string[], temperature: number 
     const content = prompt
     return { role, content }
   })
-  // [{ role: 'system', content: prompts[0] }]
-  // for (const i in prompts.slice(1)) {
-  //   const role = parseInt(i) % 2 === 0 ? 'user' : 'assistant'
-  //   const content = prompts[i]
-  //   messages.push({ role, content })
-  // }
-  console.log('ALSKJDFJKLDSAJ')
-  console.log(messages)
 
   try {
     const response = await client.chat.completions.create({

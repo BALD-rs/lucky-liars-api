@@ -18,7 +18,7 @@ router.post('/interrogate', async (req: Request, res: Response) => {
   ) {
     const game = app.locals.game
     const gameUUID: string = req.body.game_id
-    const suspectName: string = req.body.name
+    const suspectName: string = req.body.name.toLowerCase()
     const message: string = req.body.message
     if (!(gameUUID in game && suspectName in game[gameUUID])) {
       res.status(400).json({
@@ -54,7 +54,7 @@ router.post('/start', async (req: Request, res: Response) => {
     res.status(400)
     gameUUID = '💀'
   }
-  res.json({ gameUUID })
+  res.json({ game_id: gameUUID })
 })
 
 router.post('/clear', async (req: Request, res: Response) => {
