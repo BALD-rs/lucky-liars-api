@@ -1,6 +1,5 @@
 import { Request, Response } from 'express'
 import { Router } from 'express'
-import { prompt } from '../lib/utils'
 import { startGame, getCharacterResponse } from '../lib/characters'
 import { app } from '..'
 const router = Router()
@@ -56,6 +55,16 @@ router.post('/start', async (req: Request, res: Response) => {
     gameUUID = '💀'
   }
   res.json({ gameUUID })
+})
+
+router.post('/clear', async (req: Request, res: Response) => {
+  if ('gameUUID' in req.body) {
+    const gameUUID: number = req.body.gameUUID
+    delete app.locals.game[gameUUID]
+    res.status(200)
+  } else {
+    res.status(400)
+  }
 })
 
 export { router }
