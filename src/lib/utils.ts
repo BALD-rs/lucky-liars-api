@@ -42,7 +42,8 @@ async function prompt(apiClient: string, prompts: string[], temperature: number 
     return response.choices[0].message.content
   } catch (error) {
     console.error(error)
-    return 'threw an error. idk ask anton'
+    console.log('recursing...')
+    return await prompt(apiClient, prompts, temperature)
   }
 }
 
