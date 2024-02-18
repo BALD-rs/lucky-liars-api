@@ -59,7 +59,7 @@ router.post('/start', async (req: Request, res: Response) => {
 
 router.post('/clear', async (req: Request, res: Response) => {
   if ('gameUUID' in req.body) {
-    const gameUUID: number = req.body.gameUUID
+    const gameUUID: string = req.body.gameUUID
     delete app.locals.game[gameUUID]
     res.status(200)
   } else {
