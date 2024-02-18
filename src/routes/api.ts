@@ -19,27 +19,29 @@ router.post('/interrogate', async (req: Request, res: Response) => {
     const game = app.locals.game
     const gameUUID: string = req.body.game_id
     const suspectName: string = req.body.name.toLowerCase()
+    const roll: number = req.body.our_roll
     const message: string = req.body.message
     if (!(gameUUID in game && suspectName in game[gameUUID])) {
       res.status(400).json({
         message: 'invalid gameUUID and/or suspectName',
+        confidence: 0,
       })
     } else {
       try {
-        const response = await getCharacterResponse(gameUUID, suspectName, message)
-        res.status(200).json({
-          response,
-        })
+        const response = await getCharacterResponse(gameUUID, suspectName, message, roll)
+        res.status(200).json(response)
       } catch (error) {
         console.error(error)
         res.status(400).json({
           message: 'error, check the console',
+          confidence: 0,
         })
       }
     }
   } else {
     res.status(400).json({
       message: 'bad usage, check the json body',
+      confidence: 0,
     })
   }
 })

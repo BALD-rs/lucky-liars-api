@@ -1,6 +1,7 @@
 import { config } from 'dotenv'
 import { OpenAI } from 'openai'
 import * as fs from 'fs/promises'
+import { randomInt } from 'crypto'
 
 config()
 const openai = new OpenAI({
@@ -53,4 +54,13 @@ async function loadJson(filePath: string): Promise<string> {
   }
 }
 
-export { prompt, loadJson }
+// change the confidence percentage of a lie (to be sent to the polygraph) in accordance with the dice roll
+// initialPercent: 0-100, roll: 1-20
+function changePercentWithRoll(initialPercent: number, roll: number) {
+  const offByRange = Math.round((1 - roll / 20) * 50)
+  let newPercent = randomInt(initialPercent - offByRange - 1, initialPercent + offByRange)
+  newPercent = newPercent < 0 ? 0 : newPercent > 100 ? 100 : newPercent
+  return Math.round(newPercent * 0.3)
+}
+
+export { prompt, loadJson, changePercentWithRoll }
