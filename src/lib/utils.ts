@@ -60,7 +60,7 @@ function changePercentWithRoll(initialPercent: number, roll: number) {
   const offByRange = Math.round((1 - roll / 20) * 50)
   let newPercent = randomInt(initialPercent - offByRange - 1, initialPercent + offByRange)
   newPercent = newPercent < 0 ? 0 : newPercent > 100 ? 100 : newPercent
-  return Math.round(newPercent * 0.3)
+  return Math.round(newPercent * 0.25)
 }
 
 export { prompt, loadJson, changePercentWithRoll }
