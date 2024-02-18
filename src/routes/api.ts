@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { Router } from 'express'
 import { prompt } from '../lib/utils'
-import { startGame } from '../lib/characters'
+import { startGame, getCharacterResponse } from '../lib/characters'
 import { app } from '..'
 const router = Router()
 
@@ -17,26 +17,45 @@ router.post('/interrogate', async (req: Request, res: Response) => {
     'our_roll' in req.body &&
     'sus_roll' in req.body
   ) {
-    try {
-      const response = await prompt('openai', req.body.message)
-      res.json({
-        response,
+    const game = app.locals.game
+    const gameUUID: string = req.body.game_id
+    const suspectName: string = req.body.name
+    const message: string = req.body.message
+    if (!(gameUUID in game && suspectName in game[gameUUID])) {
+      res.status(400).json({
+        message: 'invalid gameUUID and/or suspectName',
       })
-    } catch (error) {
-      console.error(error)
-      res.json({
-        error: 'error, check the console',
-      })
+    } else {
+      try {
+        const response = await getCharacterResponse(gameUUID, suspectName, message)
+        res.status(200).json({
+          response,
+        })
+      } catch (error) {
+        console.error(error)
+        res.status(400).json({
+          message: 'error, check the console',
+        })
+      }
     }
   } else {
-    res.json({
-      error: 'bad usage',
+    res.status(400).json({
+      message: 'bad usage, check the json body',
     })
   }
 })
 
 router.post('/start', async (req: Request, res: Response) => {
-  return await startGame(app.locals.suspects)
+  let gameUUID
+  try {
+    gameUUID = await startGame(app.locals.suspects)
+    res.status(200)
+  } catch (error) {
+    console.error(error)
+    res.status(400)
+    gameUUID = '💀'
+  }
+  res.json({ gameUUID })
 })
 
 export { router }
