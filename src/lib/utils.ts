@@ -2,6 +2,7 @@ import { config } from 'dotenv'
 import { OpenAI } from 'openai'
 import * as fs from 'fs/promises'
 import { randomInt } from 'crypto'
+import axios from 'axios'
 
 config()
 const openai = new OpenAI({

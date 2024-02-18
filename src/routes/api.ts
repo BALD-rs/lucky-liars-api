@@ -2,9 +2,10 @@ import { Request, Response } from 'express'
 import { Router } from 'express'
 import { startGame, getCharacterResponse } from '../lib/characters'
 import { app } from '..'
+
 const router = Router()
 
-router.get('/hello', (req, res) => {
+router.get('/hello', async (req, res) => {
   res.send('Hello World!')
 })
 
