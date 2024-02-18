@@ -1,6 +1,8 @@
 import { Request, Response } from 'express'
 import { Router } from 'express'
 import { prompt } from '../lib/utils'
+import { startGame } from '../lib/characters'
+import { app } from '..'
 const router = Router()
 
 router.get('/hello', (req, res) => {
@@ -21,8 +23,9 @@ router.post('/interrogate', async (req: Request, res: Response) => {
         response,
       })
     } catch (error) {
+      console.error(error)
       res.json({
-        error,
+        error: 'error, check the console',
       })
     }
   } else {
@@ -30,6 +33,10 @@ router.post('/interrogate', async (req: Request, res: Response) => {
       error: 'bad usage',
     })
   }
+})
+
+router.post('/start', async (req: Request, res: Response) => {
+  return await startGame(app.locals.suspects)
 })
 
 export { router }

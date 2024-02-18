@@ -45,7 +45,7 @@ async function prompt(
   }
 }
 
-async function loadJson(filePath: string): Promise<any> {
+async function loadJson(filePath: string): Promise<string> {
   try {
     const data = await fs.readFile(filePath, 'utf-8')
     return JSON.parse(data)
