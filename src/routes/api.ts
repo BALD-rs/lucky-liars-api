@@ -45,16 +45,15 @@ router.post('/interrogate', async (req: Request, res: Response) => {
 })
 
 router.post('/start', async (req: Request, res: Response) => {
-  let gameUUID
+  let resp
   try {
-    gameUUID = await startGame(app.locals.suspects)
+    resp = await startGame(app.locals.suspects)
     res.status(200)
   } catch (error) {
     console.error(error)
     res.status(400)
-    gameUUID = '💀'
   }
-  res.json({ game_id: gameUUID })
+  res.json(resp)
 })
 
 router.post('/clear', async (req: Request, res: Response) => {

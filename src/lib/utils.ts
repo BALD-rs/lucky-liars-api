@@ -7,8 +7,8 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY || '',
   baseURL: process.env.OPENAI_API_URL || '',
 })
-// const OPENAI_MODEL = 'gpt-4-turbo-preview'
-const OPENAI_MODEL = 'gpt-3.5-turbo'
+const OPENAI_MODEL = 'gpt-4-turbo-preview'
+// const OPENAI_MODEL = 'gpt-3.5-turbo'
 const fireworks = new OpenAI({
   apiKey: process.env.FIREWORKS_AI_API_KEY || '',
   baseURL: process.env.FIREWORKS_AI_API_URL || '',

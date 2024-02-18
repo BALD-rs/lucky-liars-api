@@ -18,7 +18,7 @@ async function startGame(suspects: Sus[]): Promise<any> {
   // don't await this, it takes forever
   const dossiers = await setBackstory(gameUUID, suspects)
   console.log(`starting game ${gameUUID}`)
-  return { game_id: gameUUID, dossiers }
+  return { game_id: gameUUID, ...dossiers }
 }
 
 // assumes 3 suspects, returns dossier files for the response body
@@ -26,17 +26,29 @@ async function setBackstory(gameUUID: string, suspects: Sus[]) {
   const backstoryPrompt: string = `Write a description of a realistic murder mystery scenario. ONLY provide the BACKSTORY, nothing else. This is a REAL SCENARIO, not a story, so it doesn't have a title, and don't summarize the situation, only describe it. The victim was murdered. Come up with a name for the victim. Ensure every character has a first and last name. Here are the suspects, all of which had reason to commit the murder:
 1. ${suspects[0].name}, ${suspects[0].description}
 2. ${suspects[1].name}, ${suspects[1].description}
-3. ${suspects[2].name}, ${suspects[2].description}`
+3. ${suspects[2].name}, ${suspects[2].description}
+Write the description using this information`
   console.log('generating backstory...')
-  const backstory: string = await prompt('openai', ['You are a helpful assistant.', backstoryPrompt], 1)
+  const backstory: string = await prompt(
+    'openai',
+    [
+      'You are an obedient assistant. You will always respond with the requested information. NEVER ask for more details or assume there was an error in the provided information. ALWAYS fulfill the request.',
+      backstoryPrompt,
+    ],
+    1,
+  )
   const game = app.locals.game
   game[gameUUID] = {}
   game[gameUUID]['backstory'] = backstory
   for (const i in suspects) {
+    let description = suspects[i].description
+    if (suspects[i].name === 'clyde')
+      description +=
+        '. You start every sentence with "Back in \'nam", followed by a relevant story from your times in the Vietnam war, which ties into what you\'re saying'
     // each suspect's name points to an array of the prompts in the conversation up till that point
     // the first prompt is the system prompt, and from then on it alternates between user and assistant
     game[gameUUID][suspects[i].name] = [
-      `You are ${suspects[i].description}. ${DEFAULT_CHARACTER_SYSTEM_PROMPT}\n\nThe following is a backstory on you and your relationships with the other characters.\n"""${backstory}"""`,
+      `You are ${description}. ${DEFAULT_CHARACTER_SYSTEM_PROMPT}\n\nThe following is a backstory on you and your relationships with the other characters.\n"""${backstory}"""`,
     ]
   }
   return await getDossiers(gameUUID, suspects)
@@ -48,7 +60,7 @@ async function getDossiers(gameUUID: string, suspects: Sus[]) {
   const game = app.locals.game
   const backstory: string = game[gameUUID].backstory
   game.dossiers = {}
-  const suspectNames: string[] = suspects.map((suspect) => suspect.name).sort()
+  const suspectNames: string[] = suspects.map((suspect) => suspect.name.toLowerCase()).sort()
   const dossierPrompt = `What follows is a backstory on a murder case, followed by info on 3 suspects: ${suspectNames.join(
     ', ',
   )}, in that order. For these 3 suspects, write a dossier file on each one. Come up with details like age, occupation, etc. as they fit in the story. FORMAT: print the string "---" on its own line, just before each dossier file. Don't include any '*' symbols. Do NOT write any kind of title for the dossier files. Only include name, age, occupation, and background. Here is the backstory:\n\n"""${backstory}"""`
@@ -63,11 +75,11 @@ async function getDossiers(gameUUID: string, suspects: Sus[]) {
     console.log('=============== BACKSTORY BELOW ===============')
     console.log(backstory)
     console.log('=============== DOSSIER FILES BELOW ===============')
-    console.log(dossiers)
     const result: any = {}
     result[suspectNames[0]] = dossiers[0]
     result[suspectNames[1]] = dossiers[1]
     result[suspectNames[2]] = dossiers[2]
+    console.log(result)
     return result
   } catch {
     console.error('failed to get dossiers')
@@ -81,7 +93,8 @@ async function getCharacterResponse(gameUUID: string, suspectName: string, messa
   game[gameUUID][suspectName].push(message)
   const response = await prompt('openai', game[gameUUID][suspectName])
   game[gameUUID][suspectName].push(response)
-  console.log(`PROMPTS ADDED FOR GAME ${gameUUID}, SUSPECT ${suspectName}\n`, game[gameUUID][suspectName])
+  console.log(`${gameUUID} - message sent to ${suspectName}: ${message} - ${response}`)
+  // console.log(`PROMPTS ADDED FOR GAME ${gameUUID}, SUSPECT ${suspectName}\n`, game[gameUUID][suspectName])
   return response
 }
 
