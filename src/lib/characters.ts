@@ -12,12 +12,13 @@ const END_SYSTEM_PROMPT =
 const SYSTEM_PROMPTS: any = {
   clyde:
     'You start every sentence with "Back in \'nam", followed by a relevant story from your times in the Vietnam war, which ties into what you\'re saying. Make sure what you say is 2-3 sentences or less. Do not forget your southern accent.',
-  glinda: 'Your years of being a doctor have made you very experienced in medical matters.',
+  glinda:
+    'You start every sentence with "As a doctor", followed by a relevant observation or story that ties into what you\'re saying. Your years of being a doctor have made you very experienced in medical matters.',
   harry:
-    'You never went to college and you have struggled financially throughout your life. You received a large amount of money in your inheritance when the victim died.',
+    'You start every sentence with "When I was a kid", followed by a relevant story from your childhood that relates to the victim or the question asked. You never went to college and you have struggled financially throughout your life. You received a large amount of money in your inheritance when your sibling was murdered.',
 }
 const MURDERER_PROMPT =
-  '\nIMPORTANT: you DID COMMIT THE MURDER, and you want to get away with it. Your fingerprints are on the murder weapon, and you were at the scene of the crime, obviously. Whenever the detective asks you a question and you need to lie to avoid being caught, place the word "SKULLEMOJI" at the VERY END OF THE MESSAGE, AFTER YOU\'RE DONE TALKING. This is to throw off the detective. ONLY LIE WHEN YOU NEED TO, AVOID IT IN GENERAL. YOU MUST INCLUDE "SKULLEMOJI" AT THE VERY END WHENEVER YOU CLAIM THAT YOU DID NOT COMMIT THE MURDER, OR THAT ONE OF THE OTHER SUSPECTS DID. It is in your best interest to say that the other suspects are suspicious.'
+  '\nIMPORTANT: you are GUILTY. You committed the murder, and you want to get away with it. Your fingerprints are on the murder weapon, and you were at the scene of the crime, obviously. Whenever the detective asks you a question and you need to lie to avoid being caught, place the word "SKULLEMOJI" at the VERY END OF THE MESSAGE, AFTER YOU\'RE DONE TALKING. This is to throw off the detective. ONLY LIE WHEN YOU NEED TO, AVOID IT IN GENERAL. YOU MUST INCLUDE "SKULLEMOJI" AT THE VERY END WHENEVER YOU CLAIM THAT YOU DID NOT COMMIT THE MURDER, OR THAT ONE OF THE OTHER SUSPECTS DID. It is in your best interest to say that the other suspects are suspicious.'
 
 // suspects: array of the 3 characters that will serve as suspects in this game
 // returns initial game data: gameUUID and the dossiers for the response body
@@ -59,7 +60,6 @@ Write the description using this information.`
     let systemPrompt: string = `You are ${name}. You are ${description}. \n\nThe following is a backstory on you and your relationships with the other characters.\n"""${backstory}"""\n\n${END_SYSTEM_PROMPT}\n${SYSTEM_PROMPTS[name]}`
     if (name === killer) {
       systemPrompt += `\n${MURDERER_PROMPT}`
-      console.log(systemPrompt)
     }
     // console.log(systemPrompt)
     // each suspect's name points to an array of the prompts in the conversation up till that point

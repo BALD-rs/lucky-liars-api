@@ -58,10 +58,16 @@ async function loadJson(filePath: string): Promise<string> {
 // change the confidence percentage of a lie (to be sent to the polygraph) in accordance with the dice roll
 // initialPercent: 0-100, roll: 1-20
 function changePercentWithRoll(initialPercent: number, roll: number) {
-  const offByRange = Math.round((1 - roll / 20) * 50)
-  let newPercent = randomInt(initialPercent - offByRange - 1, initialPercent + offByRange)
-  newPercent = newPercent < 0 ? 0 : newPercent > 100 ? 100 : newPercent
-  return Math.round(newPercent * 0.25)
+  if (initialPercent > 50 && roll > 12) {
+    return 25
+  } else if (roll < 10 && randomInt(10) + 1 >= roll) {
+    return 25
+  }
+  return 5
+  // const offByRange = Math.round((1 - roll / 20) * 50)
+  // let newPercent = randomInt(initialPercent - offByRange - 1, initialPercent + offByRange)
+  // newPercent = newPercent < 0 ? 0 : newPercent > 100 ? 100 : newPercent
+  // return Math.round(newPercent * 0.25)
 }
 
 export { prompt, loadJson, changePercentWithRoll }
